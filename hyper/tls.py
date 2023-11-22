@@ -24,13 +24,14 @@ _context = None
 cert_loc = path.join(path.dirname(__file__), 'certs.pem')
 
 
-def wrap_socket(sock, server_hostname, ssl_context=None, force_proto=None):
+def wrap_socket(sock, server_hostname, ssl_context=None, force_proto=None, timeout:int=5000):
     """
     A vastly simplified SSL wrapping function. We'll probably extend this to
     do more things later.
     """
 
     global _context
+    sock.settimeout(timeout)
 
     if ssl_context:
         # if an SSLContext is provided then use it instead of default context
