@@ -85,7 +85,7 @@ class HTTPConnection(object):
             self._host, self._port, **self._h1_kwargs
         )
 
-    def request(self, method, url, body=None, headers=None):
+    def request(self, method, url, body=None, headers=None, timeout:int=50000):
         """
         This will send a request to the server using the HTTP request method
         ``method`` and the selector ``url``. If the ``body`` argument is
@@ -119,6 +119,8 @@ class HTTPConnection(object):
                 self._host, self._port, **self._h2_kwargs
             )
             self._conn._sock = e.sock
+            self._conn._sock .settimeout(timeout)
+
 
             # Because we skipped the connecting logic, we need to send the
             # HTTP/2 preamble.
