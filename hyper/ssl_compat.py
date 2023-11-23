@@ -48,7 +48,6 @@ def _proxy(method):
         return getattr(self._conn, method)(*args, **kwargs)
     return inner
 
-
 # Referenced in hyper/http20/connection.py. These values come
 # from the python ssl package, and must be defined in this file
 # for hyper to work in python versions <2.7.9
@@ -188,7 +187,7 @@ class SSLSocket(object):
                 C='countryName',
                 ST='stateOrProvinceName',
                 L='localityName',
-                O='organizationName',  # noqa: E741
+                O='organizationName',
                 OU='organizationalUnitName',
                 CN='commonName',
             ).get(alias, alias)

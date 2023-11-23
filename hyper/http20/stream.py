@@ -122,18 +122,8 @@ class Stream(object):
             chunks = (data[i:i+MAX_CHUNK]
                       for i in range(0, len(data), MAX_CHUNK))
 
-        # since we need to know when we have a last package we need to know
-        # if there is another package in advance
-        cur_chunk = None
-        try:
-            cur_chunk = next(chunks)
-            while True:
-                next_chunk = next(chunks)
-                self._send_chunk(cur_chunk, False)
-                cur_chunk = next_chunk
-        except StopIteration:
-            if cur_chunk is not None:  # cur_chunk none when no chunks to send
-                self._send_chunk(cur_chunk, final)
+        for chunk in chunks:
+            self._send_chunk(chunk, final)
 
     def _read(self, amt=None):
         """
@@ -333,12 +323,19 @@ class Stream(object):
         while len(data) > self._out_flow_control_window:
             self._recv_cb()
 
+        # If the length of the data is less than MAX_CHUNK, we're probably
+        # at the end of the file. If this is the end of the data, mark it
+        # as END_STREAM.
+        end_stream = False
+        if len(data) < MAX_CHUNK and final:
+            end_stream = True
+
         # Send the frame and decrement the flow control window.
         with self._conn as conn:
             conn.send_data(
-                stream_id=self.stream_id, data=data, end_stream=final
+                stream_id=self.stream_id, data=data, end_stream=end_stream
             )
         self._send_outstanding_data()
 
-        if final:
+        if end_stream:
             self.local_closed = True

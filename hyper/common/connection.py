@@ -44,9 +44,8 @@ class HTTPConnection(object):
     :param proxy_host: (optional) The proxy to connect to.  This can be an IP
         address or a host name and may include a port.
     :param proxy_port: (optional) The proxy port to connect to. If not provided
-        and one also isn't provided in the ``proxy_host`` parameter, defaults
-        to 8080.
-    :param proxy_headers: (optional) The headers to send to a proxy.
+        and one also isn't provided in the ``proxy`` parameter, defaults to
+        8080.
     """
     def __init__(self,
                  host,
@@ -57,24 +56,18 @@ class HTTPConnection(object):
                  ssl_context=None,
                  proxy_host=None,
                  proxy_port=None,
-                 proxy_headers=None,
-                 timeout=None,
                  **kwargs):
 
         self._host = host
         self._port = port
         self._h1_kwargs = {
             'secure': secure, 'ssl_context': ssl_context,
-            'proxy_host': proxy_host, 'proxy_port': proxy_port,
-            'proxy_headers': proxy_headers, 'enable_push': enable_push,
-            'timeout': timeout
+            'proxy_host': proxy_host, 'proxy_port': proxy_port
         }
         self._h2_kwargs = {
             'window_manager': window_manager, 'enable_push': enable_push,
             'secure': secure, 'ssl_context': ssl_context,
-            'proxy_host': proxy_host, 'proxy_port': proxy_port,
-            'proxy_headers': proxy_headers,
-            'timeout': timeout
+            'proxy_host': proxy_host, 'proxy_port': proxy_port
         }
 
         # Add any unexpected kwargs to both dictionaries.
@@ -85,7 +78,7 @@ class HTTPConnection(object):
             self._host, self._port, **self._h1_kwargs
         )
 
-    def request(self, method, url, body=None, headers=None, timeout:int=50000):
+    def request(self, method, url, body=None, headers=None):
         """
         This will send a request to the server using the HTTP request method
         ``method`` and the selector ``url``. If the ``body`` argument is
@@ -119,8 +112,6 @@ class HTTPConnection(object):
                 self._host, self._port, **self._h2_kwargs
             )
             self._conn._sock = e.sock
-            self._conn._sock .settimeout(timeout)
-
 
             # Because we skipped the connecting logic, we need to send the
             # HTTP/2 preamble.
