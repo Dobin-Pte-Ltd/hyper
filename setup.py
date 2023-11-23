@@ -49,6 +49,7 @@ packages = [
     'hyper.http20',
     'hyper.common',
     'hyper.http11',
+    'hyper.packages',
 ]
 
 setup(
