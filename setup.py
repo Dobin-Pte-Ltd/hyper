@@ -50,6 +50,7 @@ packages = [
     'hyper.common',
     'hyper.http11',
     'hyper.packages',
+    'hyper.packages.rfc3986'
 ]
 
 setup(
