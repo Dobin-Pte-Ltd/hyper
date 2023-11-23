@@ -24,7 +24,7 @@ _context = None
 cert_loc = path.join(path.dirname(__file__), 'certs.pem')
 
 
-def wrap_socket(sock, server_hostname, ssl_context=None, force_proto=None):
+def wrap_socket(sock, server_hostname, ssl_context=None, force_proto=None, timeout:int=5000):
     """
     A vastly simplified SSL wrapping function. We'll probably extend this to
     do more things later.
@@ -40,7 +40,8 @@ def wrap_socket(sock, server_hostname, ssl_context=None, force_proto=None):
         if _context is None:  # pragma: no cover
             _context = init_context()
         _ssl_context = _context
-
+        
+    sock.settimeout(timeout)
     # the spec requires SNI support
     ssl_sock = _ssl_context.wrap_socket(sock, server_hostname=server_hostname)
     # Setting SSLContext.check_hostname to True only verifies that the
